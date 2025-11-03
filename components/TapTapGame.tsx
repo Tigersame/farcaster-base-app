@@ -45,8 +45,10 @@ export function TapTapGame() {
   }, [])
 
   useEffect(() => {
+    let interval: NodeJS.Timeout | null = null
+    
     if (gameState === 'playing' && stats.timeLeft > 0) {
-      const interval = setInterval(() => {
+      interval = setInterval(() => {
         setStats((prev) => {
           const newTime = prev.timeLeft - 1
           if (newTime <= 0) {
@@ -66,11 +68,18 @@ export function TapTapGame() {
         })
       }, 1000)
       setTimer(interval as any)
-      return () => clearInterval(interval as any)
-    } else if (timer) {
-      clearInterval(timer as any)
-      setTimer(null)
     }
+    
+    return () => {
+      if (interval) {
+        clearInterval(interval)
+      }
+      if (timer) {
+        clearInterval(timer as any)
+        setTimer(null)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState, stats.timeLeft])
 
   const startGame = () => {
@@ -212,7 +221,39 @@ export function TapTapGame() {
               className="tap-button"
               style={styles.tapButton}
             >
-              <div style={styles.tapButtonText}>TAP!</div>
+              <svg 
+                width="140" 
+                height="140" 
+                viewBox="0 0 120 120" 
+                fill="none" 
+                xmlns="http://www.w3.org/2000/svg"
+                style={styles.baseLogo}
+              >
+                <rect x="0" y="0" width="120" height="120" rx="20" fill="url(#baseGradient)"/>
+                <path 
+                  d="M30 30L60 60L30 90L30 30Z" 
+                  fill="white" 
+                  opacity="0.95"
+                />
+                <path 
+                  d="M90 30L60 60L90 90L90 30Z" 
+                  fill="white" 
+                  opacity="0.95"
+                />
+                <path 
+                  d="M30 60L60 90L90 60L60 30L30 60Z" 
+                  fill="white" 
+                  opacity="0.7"
+                />
+                <rect x="45" y="45" width="30" height="30" rx="4" fill="url(#baseGradient)"/>
+                <defs>
+                  <linearGradient id="baseGradient" x1="0" y1="0" x2="120" y2="120">
+                    <stop offset="0%" stopColor="#0052FF"/>
+                    <stop offset="50%" stopColor="#0039CC"/>
+                    <stop offset="100%" stopColor="#002699"/>
+                  </linearGradient>
+                </defs>
+              </svg>
               <div style={styles.tapButtonPoints}>
                 +{stats.level * 10} pts
               </div>
@@ -253,7 +294,7 @@ export function TapTapGame() {
 
       {gameState === 'gameOver' && (
         <div style={styles.endScreen}>
-          <div style={styles.gameOver}>⏰ Time's Up!</div>
+          <div style={styles.gameOver}>⏰ Time&apos;s Up!</div>
           <div style={styles.endStats}>
             <div style={styles.endStatRow}>
               <span>Level Reached:</span>
@@ -375,27 +416,32 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: '200px',
     height: '200px',
     borderRadius: '50%',
-    background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)',
-    border: 'none',
+    background: 'linear-gradient(135deg, #0052FF 0%, #0039CC 100%)',
+    border: '4px solid rgba(255, 255, 255, 0.3)',
     cursor: 'pointer',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
+    boxShadow: '0 8px 24px rgba(0, 82, 255, 0.4)',
     transition: 'transform 0.1s ease',
     userSelect: 'none',
     WebkitTapHighlightColor: 'transparent',
+    padding: '1rem',
+    position: 'relative',
   },
-  tapButtonText: {
-    fontSize: '2rem',
-    fontWeight: 'bold',
-    color: 'white',
-    marginBottom: '0.5rem',
+  baseLogo: {
+    width: '120px',
+    height: '120px',
+    filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2))',
   },
   tapButtonPoints: {
     fontSize: '1rem',
-    opacity: 0.9,
+    opacity: 0.95,
+    fontWeight: 'bold',
+    color: 'white',
+    marginTop: '0.5rem',
+    textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
   },
   levelInfo: {
     textAlign: 'center',
