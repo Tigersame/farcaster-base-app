@@ -1,6 +1,5 @@
 'use client'
 
-import { OnchainKitProvider as BaseOnchainKitProvider } from '@base-org/onchainkit'
 import { WagmiProvider, createConfig, http } from 'wagmi'
 import { base } from 'wagmi/chains'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -22,12 +21,7 @@ export function OnchainKitProvider({ children }: OnchainKitProviderProps) {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <BaseOnchainKitProvider
-          apiKey={process.env.NEXT_PUBLIC_CDP_CLIENT_API_KEY}
-          chain={base}
-        >
-          {children}
-        </BaseOnchainKitProvider>
+        {children}
       </QueryClientProvider>
     </WagmiProvider>
   )
