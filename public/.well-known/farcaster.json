@@ -1,0 +1,21 @@
+{
+  "accountAssociation": {
+    "header": "x-farcaster-verify",
+    "payload": "fid"
+  },
+  "frame": {
+    "version": "next",
+    "imageUrl": "",
+    "button": {
+      "title": "Launch App",
+      "action": {
+        "type": "launch_frame",
+        "name": "Farcaster Base App",
+        "url": "https://your-app-url.vercel.app",
+        "splashImageUrl": "",
+        "splashBackgroundColor": ""
+      }
+    }
+  }
+}
+
