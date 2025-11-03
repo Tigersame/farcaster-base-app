@@ -12,10 +12,13 @@ const config = createConfig({
   connectors: [
     injected(),
     metaMask(),
-    coinbaseWallet({ appName: 'Farcaster Base App' }),
+    coinbaseWallet({ 
+      appName: 'Farcaster Base App',
+      // Base Smart Wallet (Formally) support is built into coinbaseWallet connector
+    }),
   ],
   transports: {
-    [base.id]: http(process.env.NEXT_PUBLIC_BASE_RPC_URL || 'https://mainnet.base.org'),
+    [base.id]: http(process.env.NEXT_PUBLIC_BASE_RPC_URL || 'https://base-mainnet.g.alchemy.com/v2/skI70Usmhsnf0GDuGdYqj'),
     [baseSepolia.id]: http(process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL || 'https://sepolia.base.org'),
   },
 })

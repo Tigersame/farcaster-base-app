@@ -41,7 +41,7 @@ BASE_SEPOLIA_RPC_URL=https://sepolia.base.org
 PRIVATE_KEY=your_wallet_private_key
 
 # For Base Mainnet (after testing)
-BASE_RPC_URL=https://mainnet.base.org
+BASE_RPC_URL=https://base-mainnet.g.alchemy.com/v2/skI70Usmhsnf0GDuGdYqj
 PRIVATE_KEY=your_wallet_private_key
 ```
 

@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi'
+import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract, useChainId } from 'wagmi'
 import { parseUnits, formatUnits } from 'viem'
+import { base, baseSepolia } from 'wagmi/chains'
 
 // BaseTap Contract ABI
 const BASETAP_ABI = [
@@ -56,12 +57,22 @@ const BASETAP_ABI = [
   },
 ] as const
 
-// Contract address - Base Sepolia Testnet
-const CONTRACT_ADDRESS = (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || '0xAa511Ffdf6492c61cE4f6E3b9d6088B2795a0f21') as `0x${string}`
+// Contract addresses for different networks
+const CONTRACT_ADDRESSES = {
+  [baseSepolia.id]: (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_SEPOLIA || '0xAa511Ffdf6492c61cE4f6E3b9d6088B2795a0f21') as `0x${string}`,
+  [base.id]: (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_MAINNET || '0x2e0c500476b6f45886259f8e97fcf93fa800ee78') as `0x${string}`,
+} as const
 
 export function useBaseTapContract() {
   const { address, isConnected } = useAccount()
+  const chainId = useChainId()
   const [claimingLevel, setClaimingLevel] = useState<number | null>(null)
+  
+  // Get contract address for current chain
+  const CONTRACT_ADDRESS = CONTRACT_ADDRESSES[chainId as keyof typeof CONTRACT_ADDRESSES] || CONTRACT_ADDRESSES[baseSepolia.id]
+  const isMainnet = chainId === base.id
+  const isTestnet = chainId === baseSepolia.id
+  const isContractDeployed = CONTRACT_ADDRESS && CONTRACT_ADDRESS !== '0x0000000000000000000000000000000000000000' && CONTRACT_ADDRESS.length > 0
 
   // Write contract for claiming rewards
   const { 
@@ -83,17 +94,17 @@ export function useBaseTapContract() {
     functionName: 'balanceOf',
     args: address ? [address] : undefined,
     query: {
-      enabled: !!address && isConnected,
+      enabled: !!address && isConnected && isContractDeployed,
     },
   })
 
   // Read reward per level
-  const { data: rewardPerLevel } = useReadContract({
+  const { data: rewardPerLevel, error: rewardError } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: BASETAP_ABI,
     functionName: 'REWARD_PER_LEVEL',
     query: {
-      enabled: !!CONTRACT_ADDRESS && CONTRACT_ADDRESS !== '0x0000000000000000000000000000000000000000',
+      enabled: isContractDeployed,
     },
   })
 
@@ -105,7 +116,7 @@ export function useBaseTapContract() {
       functionName: 'hasClaimedLevel',
       args: address && level ? [address, BigInt(level)] : undefined,
       query: {
-        enabled: !!address && isConnected && !!level,
+        enabled: !!address && isConnected && !!level && isContractDeployed,
       },
     })
   }
@@ -116,8 +127,9 @@ export function useBaseTapContract() {
       throw new Error('Please connect your wallet first')
     }
 
-    if (!CONTRACT_ADDRESS || CONTRACT_ADDRESS === '0x0000000000000000000000000000000000000000') {
-      throw new Error('Contract not deployed. Please deploy the contract first.')
+    if (!isContractDeployed) {
+      const networkName = isMainnet ? 'Base Mainnet' : 'Base Sepolia'
+      throw new Error(`Contract not deployed on ${networkName}. Please deploy the contract first.`)
     }
 
     setClaimingLevel(level)
@@ -140,8 +152,9 @@ export function useBaseTapContract() {
       throw new Error('Please connect your wallet first')
     }
 
-    if (!CONTRACT_ADDRESS || CONTRACT_ADDRESS === '0x0000000000000000000000000000000000000000') {
-      throw new Error('Contract not deployed. Please deploy the contract first.')
+    if (!isContractDeployed) {
+      const networkName = isMainnet ? 'Base Mainnet' : 'Base Sepolia'
+      throw new Error(`Contract not deployed on ${networkName}. Please deploy the contract first.`)
     }
 
     try {
@@ -163,10 +176,15 @@ export function useBaseTapContract() {
   }
 
   const tokenBalance = balance ? formatUnits(balance, 18) : '0'
+  // Default to 10000 tokens (10,000 * 10^18) if contract read fails
   const rewardAmount = rewardPerLevel ? formatUnits(rewardPerLevel, 18) : '10000'
 
   return {
     contractAddress: CONTRACT_ADDRESS,
+    chainId,
+    isMainnet,
+    isTestnet,
+    isContractDeployed,
     claimLevel,
     claimMultipleLevels,
     isClaiming: isClaiming || isConfirming,

@@ -32,7 +32,7 @@ Create a `.env` file in the root directory:
 
 ```env
 # Base Network RPC URL
-BASE_RPC_URL=https://mainnet.base.org
+BASE_RPC_URL=https://base-mainnet.g.alchemy.com/v2/skI70Usmhsnf0GDuGdYqj
 BASE_SEPOLIA_RPC_URL=https://sepolia.base.org
 
 # Your wallet private key (for deployment)

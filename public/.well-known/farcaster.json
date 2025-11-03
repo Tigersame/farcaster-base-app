@@ -5,17 +5,16 @@
   },
   "frame": {
     "version": "next",
-    "imageUrl": "",
+    "imageUrl": "https://your-deployed-url.vercel.app/og-image.png",
     "button": {
-      "title": "Launch App",
+      "title": "Play Tap Tap Game",
       "action": {
         "type": "launch_frame",
-        "name": "Farcaster Base App",
-        "url": "https://your-app-url.vercel.app",
-        "splashImageUrl": "",
-        "splashBackgroundColor": ""
+        "name": "Base Tap Game",
+        "url": "https://your-deployed-url.vercel.app",
+        "splashImageUrl": "https://your-deployed-url.vercel.app/splash.png",
+        "splashBackgroundColor": "#0052FF"
       }
     }
   }
 }
-

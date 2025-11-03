@@ -10,7 +10,7 @@ export function useBaseWallet() {
   const connectors = useConnectors()
   const [error, setError] = useState<string | null>(null)
 
-  const connectWallet = (walletType: 'metamask' | 'coinbase' | 'injected' = 'metamask') => {
+  const connectWallet = (walletType: 'metamask' | 'coinbase' | 'smartwallet' | 'injected' = 'metamask') => {
     try {
       setError(null)
       
@@ -18,7 +18,8 @@ export function useBaseWallet() {
       let connector
       if (walletType === 'metamask') {
         connector = connectors.find((c) => c.id === 'metaMask' || c.name?.toLowerCase().includes('metamask'))
-      } else if (walletType === 'coinbase') {
+      } else if (walletType === 'coinbase' || walletType === 'smartwallet') {
+        // Base Smart Wallet (Formally) is accessed via coinbaseWallet connector
         connector = connectors.find((c) => c.id === 'coinbaseWallet' || c.name?.toLowerCase().includes('coinbase'))
       } else {
         connector = connectors.find((c) => c.id === 'injected' || c.type === 'injected')

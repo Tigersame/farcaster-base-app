@@ -176,9 +176,28 @@ export function TapTapGame() {
 
       {gameState === 'idle' && (
         <div style={styles.startScreen}>
-          <div style={styles.statBox}>
-            <div style={styles.statLabel}>High Score</div>
-            <div style={styles.statValue}>{highScore.toLocaleString()} pts</div>
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center', width: '100%' }}>
+            <div style={styles.statBox}>
+              <div style={styles.statLabel}>High Score</div>
+              <div style={styles.statValue}>{highScore.toLocaleString()} pts</div>
+            </div>
+            {tokenBalance && !isNaN(parseFloat(tokenBalance)) && parseFloat(tokenBalance) > 0 && (
+              <div style={{...styles.statBox, background: 'rgba(255, 215, 0, 0.3)'}}>
+                <div style={styles.statLabel}>BASETAP Balance</div>
+                <div style={{...styles.statValue, fontSize: '1.2rem'}}>
+                  {parseFloat(tokenBalance).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                </div>
+              </div>
+            )}
+            <div style={{...styles.statBox, background: 'rgba(76, 175, 80, 0.2)'}}>
+              <div style={styles.statLabel}>Reward per Level</div>
+              <div style={{...styles.statValue, fontSize: '1.1rem'}}>
+                {rewardAmount && !isNaN(parseFloat(rewardAmount)) ? parseFloat(rewardAmount).toLocaleString(undefined, { maximumFractionDigits: 0 }) : '10,000'} BASETAP
+              </div>
+            </div>
+          </div>
+          <div style={{ marginTop: '1rem', textAlign: 'center', fontSize: '0.9rem', opacity: 0.85 }}>
+            <p>🎁 Complete all 10 levels to earn up to {(rewardAmount && !isNaN(parseFloat(rewardAmount)) ? parseFloat(rewardAmount) : 10000) * TOTAL_LEVELS} BASETAP tokens!</p>
           </div>
           <button onClick={startGame} style={styles.startButton}>
             Start Game
@@ -201,6 +220,20 @@ export function TapTapGame() {
               <div style={styles.statLabel}>Time</div>
               <div style={styles.statValue}>{stats.timeLeft}s</div>
             </div>
+            {completedLevels.length > 0 && (
+              <div style={{...styles.statBox, background: 'rgba(76, 175, 80, 0.3)'}}>
+                <div style={styles.statLabel}>Rewards</div>
+                <div style={styles.statValue}>{completedLevels.length}</div>
+              </div>
+            )}
+            {tokenBalance && !isNaN(parseFloat(tokenBalance)) && parseFloat(tokenBalance) > 0 && (
+              <div style={{...styles.statBox, background: 'rgba(255, 215, 0, 0.3)'}}>
+                <div style={styles.statLabel}>BASETAP</div>
+                <div style={{...styles.statValue, fontSize: '1.1rem'}}>
+                  {parseFloat(tokenBalance).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                </div>
+              </div>
+            )}
           </div>
 
           <div style={styles.progressSection}>
@@ -282,6 +315,69 @@ export function TapTapGame() {
               </div>
             )}
           </div>
+          
+          {/* Reward Portal - Always visible when there are completed levels */}
+          {completedLevels.length > 0 && (
+            <div style={{ 
+              marginTop: '1.5rem', 
+              padding: '1rem', 
+              background: 'rgba(76, 175, 80, 0.15)', 
+              borderRadius: '12px',
+              border: '2px solid rgba(76, 175, 80, 0.5)'
+            }}>
+              <h3 style={{ marginBottom: '0.5rem', fontSize: '1rem', textAlign: 'center' }}>
+                💰 {completedLevels.length} Level{completedLevels.length > 1 ? 's' : ''} Completed - Claim {rewardAmount && !isNaN(parseFloat(rewardAmount)) ? parseFloat(rewardAmount).toLocaleString(undefined, { maximumFractionDigits: 0 }) : '10,000'} BASETAP per level!
+              </h3>
+              <p style={{ fontSize: '0.85rem', textAlign: 'center', marginBottom: '0.75rem', opacity: 0.9 }}>
+                Total Reward: {rewardAmount && !isNaN(parseFloat(rewardAmount)) ? (parseFloat(rewardAmount) * completedLevels.length).toLocaleString(undefined, { maximumFractionDigits: 0 }) : (10000 * completedLevels.length).toLocaleString()} BASETAP
+              </p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center' }}>
+                {completedLevels.map((level) => (
+                  <button
+                    key={level}
+                    onClick={() => handleClaimLevel(level)}
+                    disabled={isClaiming}
+                    style={{
+                      padding: '0.5rem 0.75rem',
+                      background: isClaiming ? '#ccc' : '#4CAF50',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      cursor: isClaiming ? 'not-allowed' : 'pointer',
+                      fontSize: '0.8rem',
+                      fontWeight: '500',
+                    }}
+                  >
+                    {isClaiming ? 'Claiming...' : `Level ${level}`}
+                  </button>
+                ))}
+              </div>
+              {claimError && (
+                <div style={{ 
+                  marginTop: '0.75rem', 
+                  padding: '0.5rem', 
+                  background: 'rgba(255, 0, 0, 0.2)', 
+                  borderRadius: '4px',
+                  fontSize: '0.75rem',
+                  textAlign: 'center'
+                }}>
+                  Error: {claimError.message}
+                </div>
+              )}
+              {isSuccess && (
+                <div style={{ 
+                  marginTop: '0.75rem', 
+                  padding: '0.5rem', 
+                  background: 'rgba(76, 175, 80, 0.3)', 
+                  borderRadius: '4px',
+                  fontSize: '0.75rem',
+                  textAlign: 'center'
+                }}>
+                  ✅ Tokens claimed!
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 
@@ -299,7 +395,11 @@ export function TapTapGame() {
             </div>
             <div style={styles.endStatRow}>
               <span>Token Balance:</span>
-              <span style={styles.endStatValue}>{parseFloat(tokenBalance).toLocaleString()} BASETAP</span>
+              <span style={styles.endStatValue}>
+                {tokenBalance && !isNaN(parseFloat(tokenBalance)) && parseFloat(tokenBalance) > 0 
+                  ? `${parseFloat(tokenBalance).toLocaleString(undefined, { maximumFractionDigits: 2 })} BASETAP` 
+                  : '0 BASETAP'}
+              </span>
             </div>
             {stats.score > highScore && (
               <div style={styles.newRecord}>🏆 New High Score! 🏆</div>
@@ -307,15 +407,27 @@ export function TapTapGame() {
           </div>
           <div style={{ marginTop: '1.5rem', width: '100%' }}>
             <div style={{ 
-              padding: '1rem', 
-              background: 'rgba(255, 255, 255, 0.1)', 
-              borderRadius: '8px',
-              marginBottom: '1rem'
+              padding: '1.5rem', 
+              background: 'rgba(76, 175, 80, 0.2)', 
+              borderRadius: '12px',
+              marginBottom: '1rem',
+              border: '2px solid rgba(76, 175, 80, 0.5)',
+              boxShadow: '0 4px 16px rgba(76, 175, 80, 0.3)'
             }}>
-              <h3 style={{ marginBottom: '0.5rem', fontSize: '1.1rem' }}>💰 Claim Your Rewards!</h3>
-              <p style={{ fontSize: '0.875rem', marginBottom: '1rem', opacity: 0.9 }}>
-                Each level completed earns you {parseFloat(rewardAmount).toLocaleString()} BASETAP tokens
-              </p>
+                <h3 style={{ marginBottom: '0.75rem', fontSize: '1.3rem', textAlign: 'center', fontWeight: 'bold' }}>💰 Claim Your Rewards!</h3>
+              <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+                <p style={{ fontSize: '0.95rem', opacity: 0.95, marginBottom: '0.5rem' }}>
+                  Each level completed earns you <strong>{rewardAmount && !isNaN(parseFloat(rewardAmount)) ? parseFloat(rewardAmount).toLocaleString(undefined, { maximumFractionDigits: 0 }) : '10,000'}</strong> BASETAP tokens
+                </p>
+                <p style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#FFD700' }}>
+                  Total Available: {(rewardAmount && !isNaN(parseFloat(rewardAmount)) ? parseFloat(rewardAmount) : 10000) * TOTAL_LEVELS} BASETAP
+                </p>
+                {tokenBalance && !isNaN(parseFloat(tokenBalance)) && parseFloat(tokenBalance) > 0 && (
+                  <p style={{ fontSize: '0.9rem', opacity: 0.9, marginTop: '0.5rem' }}>
+                    Current Balance: {parseFloat(tokenBalance).toLocaleString(undefined, { maximumFractionDigits: 2 })} BASETAP
+                  </p>
+                )}
+              </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center' }}>
                 {Array.from({ length: TOTAL_LEVELS }, (_, i) => i + 1).map((level) => (
                   <button
@@ -387,6 +499,71 @@ export function TapTapGame() {
               <div style={styles.newRecord}>🏆 New High Score! 🏆</div>
             )}
           </div>
+          
+          {/* Reward Portal for Completed Levels */}
+          {completedLevels.length > 0 && (
+            <div style={{ marginTop: '1.5rem', width: '100%' }}>
+              <div style={{ 
+                padding: '1rem', 
+                background: 'rgba(76, 175, 80, 0.2)', 
+                borderRadius: '8px',
+                marginBottom: '1rem',
+                border: '2px solid rgba(76, 175, 80, 0.5)'
+              }}>
+                <h3 style={{ marginBottom: '0.5rem', fontSize: '1.1rem' }}>💰 Claim Your Rewards!</h3>
+                <p style={{ fontSize: '0.875rem', marginBottom: '0.5rem', opacity: 0.9 }}>
+                  You completed {completedLevels.length} level{completedLevels.length > 1 ? 's' : ''}. Claim <strong>{rewardAmount && !isNaN(parseFloat(rewardAmount)) ? parseFloat(rewardAmount).toLocaleString(undefined, { maximumFractionDigits: 0 }) : '10,000'}</strong> BASETAP tokens per level!
+                </p>
+                <p style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#FFD700', marginBottom: '1rem' }}>
+                  Total Reward: {rewardAmount && !isNaN(parseFloat(rewardAmount)) ? (parseFloat(rewardAmount) * completedLevels.length).toLocaleString(undefined, { maximumFractionDigits: 0 }) : (10000 * completedLevels.length).toLocaleString()} BASETAP
+                </p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center' }}>
+                  {completedLevels.map((level) => (
+                    <button
+                      key={level}
+                      onClick={() => handleClaimLevel(level)}
+                      disabled={isClaiming}
+                      style={{
+                        padding: '0.5rem 1rem',
+                        background: isClaiming ? '#ccc' : '#4CAF50',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: isClaiming ? 'not-allowed' : 'pointer',
+                        fontSize: '0.875rem',
+                        fontWeight: '500',
+                      }}
+                    >
+                      {isClaiming ? 'Claiming...' : `Level ${level}`}
+                    </button>
+                  ))}
+                </div>
+                {claimError && (
+                  <div style={{ 
+                    marginTop: '1rem', 
+                    padding: '0.5rem', 
+                    background: 'rgba(255, 0, 0, 0.2)', 
+                    borderRadius: '4px',
+                    fontSize: '0.875rem'
+                  }}>
+                    Error: {claimError.message}
+                  </div>
+                )}
+                {isSuccess && (
+                  <div style={{ 
+                    marginTop: '1rem', 
+                    padding: '0.5rem', 
+                    background: 'rgba(76, 175, 80, 0.2)', 
+                    borderRadius: '4px',
+                    fontSize: '0.875rem'
+                  }}>
+                    ✅ Tokens claimed successfully!
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          
           <button onClick={resetGame} style={styles.playAgainButton}>
             Try Again
           </button>

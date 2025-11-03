@@ -3,12 +3,27 @@
 import { useEffect, useState } from 'react'
 import { useFarcasterSDK } from '@/hooks/useFarcasterSDK'
 import { useBaseWallet } from '@/hooks/useBaseWallet'
+import { useBaseTapContract } from '@/hooks/useBaseTapContract'
 import { TapTapGame } from '@/components/TapTapGame'
+import { useChainId } from 'wagmi'
+import { base, baseSepolia } from 'wagmi/chains'
 
 export default function Home() {
   const { sdk, isReady } = useFarcasterSDK()
   const { address, connectWallet, disconnectWallet, isConnected, isConnecting, error } = useBaseWallet()
+  const { isMainnet, isTestnet, isContractDeployed, chainId } = useBaseTapContract()
+  const chainIdFromWagmi = useChainId()
   const [userInfo, setUserInfo] = useState<any>(null)
+  const [mounted, setMounted] = useState(false)
+  
+  const currentChainId = chainId || chainIdFromWagmi
+  const isOnMainnet = currentChainId === base.id
+  const isOnTestnet = currentChainId === baseSepolia.id
+  const networkName = isOnMainnet ? 'Base Mainnet' : isOnTestnet ? 'Base Sepolia Testnet' : 'Unknown Network'
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     if (isReady && sdk) {
@@ -53,7 +68,38 @@ export default function Home() {
 
       <div style={{ marginBottom: '2rem', padding: '1rem', border: '1px solid #ccc', borderRadius: '8px', background: 'white' }}>
         <h2>Base Wallet Connection</h2>
-        <p>Status: {isConnected ? <span style={{ color: '#4CAF50' }}>✅ Connected</span> : <span style={{ color: '#ff4444' }}>❌ Not Connected</span>}</p>
+        <div style={{ marginBottom: '0.75rem' }}>
+          <p>Status: {!mounted ? <span style={{ color: '#666' }}>Loading...</span> : (isConnected ? <span style={{ color: '#4CAF50' }}>✅ Connected</span> : <span style={{ color: '#ff4444' }}>❌ Not Connected</span>)}</p>
+          {isConnected && (
+            <p style={{ fontSize: '0.875rem', marginTop: '0.5rem', color: '#666' }}>
+              Network: <strong style={{ color: isOnMainnet ? '#4CAF50' : isOnTestnet ? '#0052ff' : '#ff4444' }}>{networkName}</strong> (Chain ID: {currentChainId})
+            </p>
+          )}
+          {isConnected && isOnMainnet && !isContractDeployed && (
+            <div style={{ 
+              marginTop: '0.75rem', 
+              padding: '0.75rem', 
+              background: '#fff3cd', 
+              border: '1px solid #ffc107', 
+              borderRadius: '4px',
+              fontSize: '0.875rem'
+            }}>
+              ⚠️ <strong>Contract not deployed on Base Mainnet.</strong> Deploy using: <code style={{ background: '#f5f5f5', padding: '0.25rem 0.5rem', borderRadius: '4px' }}>npm run deploy:base</code>
+            </div>
+          )}
+          {isConnected && isOnMainnet && isContractDeployed && (
+            <div style={{ 
+              marginTop: '0.75rem', 
+              padding: '0.75rem', 
+              background: '#d4edda', 
+              border: '1px solid #4CAF50', 
+              borderRadius: '4px',
+              fontSize: '0.875rem'
+            }}>
+              ✅ <strong>Contract deployed on Base Mainnet!</strong>
+            </div>
+          )}
+        </div>
         {address && (
           <div style={{ marginTop: '0.5rem', padding: '0.5rem', background: '#f5f5f5', borderRadius: '4px' }}>
             <strong>Address:</strong> 
@@ -83,6 +129,22 @@ export default function Home() {
                 }}
               >
                 {isConnecting ? 'Connecting...' : '🦊 MetaMask'}
+              </button>
+              <button 
+                onClick={() => connectWallet('smartwallet')}
+                disabled={isConnecting}
+                style={{ 
+                  padding: '0.75rem 1.5rem', 
+                  background: isConnecting ? '#ccc' : '#0052ff', 
+                  color: 'white', 
+                  border: 'none', 
+                  borderRadius: '8px',
+                  cursor: isConnecting ? 'not-allowed' : 'pointer',
+                  fontWeight: '500',
+                  fontSize: '0.875rem'
+                }}
+              >
+                {isConnecting ? 'Connecting...' : '🔷 Base Smart Wallet'}
               </button>
               <button 
                 onClick={() => connectWallet('coinbase')}
@@ -131,7 +193,7 @@ export default function Home() {
               </div>
             )}
             <p style={{ marginTop: '1rem', fontSize: '0.75rem', color: '#999' }}>
-              💡 Don&apos;t have a wallet? Install <a href="https://metamask.io" target="_blank" rel="noopener noreferrer" style={{ color: '#0052ff' }}>MetaMask</a> or <a href="https://www.coinbase.com/wallet" target="_blank" rel="noopener noreferrer" style={{ color: '#0052ff' }}>Coinbase Wallet</a>
+              💡 Don&apos;t have a wallet? Try <strong>Base Smart Wallet</strong> (no extension needed!) or install <a href="https://metamask.io" target="_blank" rel="noopener noreferrer" style={{ color: '#0052ff' }}>MetaMask</a> / <a href="https://www.coinbase.com/wallet" target="_blank" rel="noopener noreferrer" style={{ color: '#0052ff' }}>Coinbase Wallet</a>
             </p>
           </div>
         )}
