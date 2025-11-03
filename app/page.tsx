@@ -7,7 +7,7 @@ import { TapTapGame } from '@/components/TapTapGame'
 
 export default function Home() {
   const { sdk, isReady } = useFarcasterSDK()
-  const { address, connectWallet, disconnectWallet, isConnected } = useBaseWallet()
+  const { address, connectWallet, disconnectWallet, isConnected, isConnecting, error } = useBaseWallet()
   const [userInfo, setUserInfo] = useState<any>(null)
 
   useEffect(() => {
@@ -53,39 +53,106 @@ export default function Home() {
 
       <div style={{ marginBottom: '2rem', padding: '1rem', border: '1px solid #ccc', borderRadius: '8px', background: 'white' }}>
         <h2>Base Wallet Connection</h2>
-        <p>Connected: {isConnected ? '✅' : '❌'}</p>
-        {address && <p>Address: {address}</p>}
-        <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
-          {!isConnected ? (
-            <button 
-              onClick={connectWallet}
-              style={{ 
-                padding: '0.5rem 1rem', 
-                background: '#0052ff', 
-                color: 'white', 
-                border: 'none', 
+        <p>Status: {isConnected ? <span style={{ color: '#4CAF50' }}>✅ Connected</span> : <span style={{ color: '#ff4444' }}>❌ Not Connected</span>}</p>
+        {address && (
+          <div style={{ marginTop: '0.5rem', padding: '0.5rem', background: '#f5f5f5', borderRadius: '4px' }}>
+            <strong>Address:</strong> 
+            <div style={{ fontFamily: 'monospace', fontSize: '0.875rem', wordBreak: 'break-all', marginTop: '0.25rem' }}>
+              {address}
+            </div>
+          </div>
+        )}
+        {!isConnected && (
+          <div style={{ marginTop: '1rem' }}>
+            <p style={{ marginBottom: '0.5rem', fontSize: '0.875rem', color: '#666' }}>
+              Connect your wallet to interact with Base network:
+            </p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+              <button 
+                onClick={() => connectWallet('metamask')}
+                disabled={isConnecting}
+                style={{ 
+                  padding: '0.75rem 1.5rem', 
+                  background: isConnecting ? '#ccc' : '#0052ff', 
+                  color: 'white', 
+                  border: 'none', 
+                  borderRadius: '8px',
+                  cursor: isConnecting ? 'not-allowed' : 'pointer',
+                  fontWeight: '500',
+                  fontSize: '0.875rem'
+                }}
+              >
+                {isConnecting ? 'Connecting...' : '🦊 MetaMask'}
+              </button>
+              <button 
+                onClick={() => connectWallet('coinbase')}
+                disabled={isConnecting}
+                style={{ 
+                  padding: '0.75rem 1.5rem', 
+                  background: isConnecting ? '#ccc' : '#0052ff', 
+                  color: 'white', 
+                  border: 'none', 
+                  borderRadius: '8px',
+                  cursor: isConnecting ? 'not-allowed' : 'pointer',
+                  fontWeight: '500',
+                  fontSize: '0.875rem'
+                }}
+              >
+                {isConnecting ? 'Connecting...' : '🪙 Coinbase Wallet'}
+              </button>
+              <button 
+                onClick={() => connectWallet('injected')}
+                disabled={isConnecting}
+                style={{ 
+                  padding: '0.75rem 1.5rem', 
+                  background: isConnecting ? '#ccc' : '#0052ff', 
+                  color: 'white', 
+                  border: 'none', 
+                  borderRadius: '8px',
+                  cursor: isConnecting ? 'not-allowed' : 'pointer',
+                  fontWeight: '500',
+                  fontSize: '0.875rem'
+                }}
+              >
+                {isConnecting ? 'Connecting...' : '💼 Other Wallet'}
+              </button>
+            </div>
+            {error && (
+              <div style={{ 
+                marginTop: '1rem', 
+                padding: '0.75rem', 
+                background: '#ffebee', 
+                border: '1px solid #ffcdd2', 
                 borderRadius: '4px',
-                cursor: 'pointer'
-              }}
-            >
-              Connect Wallet
-            </button>
-          ) : (
+                color: '#c62828',
+                fontSize: '0.875rem'
+              }}>
+                ⚠️ {error}
+              </div>
+            )}
+            <p style={{ marginTop: '1rem', fontSize: '0.75rem', color: '#999' }}>
+              💡 Don&apos;t have a wallet? Install <a href="https://metamask.io" target="_blank" rel="noopener noreferrer" style={{ color: '#0052ff' }}>MetaMask</a> or <a href="https://www.coinbase.com/wallet" target="_blank" rel="noopener noreferrer" style={{ color: '#0052ff' }}>Coinbase Wallet</a>
+            </p>
+          </div>
+        )}
+        {isConnected && (
+          <div style={{ marginTop: '1rem' }}>
             <button 
               onClick={disconnectWallet}
               style={{ 
-                padding: '0.5rem 1rem', 
+                padding: '0.75rem 1.5rem', 
                 background: '#ff4444', 
                 color: 'white', 
                 border: 'none', 
-                borderRadius: '4px',
-                cursor: 'pointer'
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: '500'
               }}
             >
-              Disconnect
+              Disconnect Wallet
             </button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       <div style={{ marginBottom: '2rem', padding: '1rem', border: '1px solid #ccc', borderRadius: '8px', background: 'white' }}>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useBaseTapContract } from '@/hooks/useBaseTapContract'
 
 interface GameStats {
   level: number
@@ -35,6 +36,8 @@ export function TapTapGame() {
   })
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null)
   const [highScore, setHighScore] = useState(0)
+  const [completedLevels, setCompletedLevels] = useState<number[]>([])
+  const { claimLevel, tokenBalance, rewardAmount, isClaiming, isSuccess, claimError } = useBaseTapContract()
 
   useEffect(() => {
     // Load high score from localStorage
@@ -84,6 +87,7 @@ export function TapTapGame() {
 
   const startGame = () => {
     setGameState('playing')
+    setCompletedLevels([])
     setStats({
       level: 1,
       score: 0,
@@ -119,7 +123,9 @@ export function TapTapGame() {
           return { ...prev, taps: newTaps, score: newScore }
         }
 
-        // Level up!
+        // Level up! Track completed level
+        const currentLevel = prev.level
+        setCompletedLevels((prev) => [...prev, currentLevel])
         const levelConfig = LEVEL_CONFIG[nextLevel - 1]
         return {
           level: nextLevel,
@@ -132,6 +138,15 @@ export function TapTapGame() {
 
       return { ...prev, taps: newTaps, score: newScore }
     })
+  }
+  
+  const handleClaimLevel = async (level: number) => {
+    try {
+      await claimLevel(level)
+    } catch (error: any) {
+      console.error('Failed to claim level:', error)
+      alert(error?.message || 'Failed to claim tokens. Please try again.')
+    }
   }
 
   const resetGame = () => {
@@ -282,9 +297,69 @@ export function TapTapGame() {
               <span>Levels Completed:</span>
               <span style={styles.endStatValue}>{TOTAL_LEVELS}/10</span>
             </div>
+            <div style={styles.endStatRow}>
+              <span>Token Balance:</span>
+              <span style={styles.endStatValue}>{parseFloat(tokenBalance).toLocaleString()} BASETAP</span>
+            </div>
             {stats.score > highScore && (
               <div style={styles.newRecord}>🏆 New High Score! 🏆</div>
             )}
+          </div>
+          <div style={{ marginTop: '1.5rem', width: '100%' }}>
+            <div style={{ 
+              padding: '1rem', 
+              background: 'rgba(255, 255, 255, 0.1)', 
+              borderRadius: '8px',
+              marginBottom: '1rem'
+            }}>
+              <h3 style={{ marginBottom: '0.5rem', fontSize: '1.1rem' }}>💰 Claim Your Rewards!</h3>
+              <p style={{ fontSize: '0.875rem', marginBottom: '1rem', opacity: 0.9 }}>
+                Each level completed earns you {parseFloat(rewardAmount).toLocaleString()} BASETAP tokens
+              </p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center' }}>
+                {Array.from({ length: TOTAL_LEVELS }, (_, i) => i + 1).map((level) => (
+                  <button
+                    key={level}
+                    onClick={() => handleClaimLevel(level)}
+                    disabled={isClaiming}
+                    style={{
+                      padding: '0.5rem 1rem',
+                      background: isClaiming ? '#ccc' : '#4CAF50',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      cursor: isClaiming ? 'not-allowed' : 'pointer',
+                      fontSize: '0.875rem',
+                      fontWeight: '500',
+                    }}
+                  >
+                    {isClaiming ? 'Claiming...' : `Level ${level}`}
+                  </button>
+                ))}
+              </div>
+              {claimError && (
+                <div style={{ 
+                  marginTop: '1rem', 
+                  padding: '0.5rem', 
+                  background: 'rgba(255, 0, 0, 0.2)', 
+                  borderRadius: '4px',
+                  fontSize: '0.875rem'
+                }}>
+                  Error: {claimError.message}
+                </div>
+              )}
+              {isSuccess && (
+                <div style={{ 
+                  marginTop: '1rem', 
+                  padding: '0.5rem', 
+                  background: 'rgba(76, 175, 80, 0.2)', 
+                  borderRadius: '4px',
+                  fontSize: '0.875rem'
+                }}>
+                  ✅ Tokens claimed successfully!
+                </div>
+              )}
+            </div>
           </div>
           <button onClick={resetGame} style={styles.playAgainButton}>
             Play Again
