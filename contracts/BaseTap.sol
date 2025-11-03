@@ -23,7 +23,7 @@ contract BaseTap is ERC20, Ownable {
     event LevelRewardClaimed(address indexed player, uint256 level, uint256 amount);
     
     constructor() ERC20("BaseTap", "BASETAP") Ownable(msg.sender) {
-        // Total supply: 100,000,000,000 tokens (100 billion)
+        // Total supply: 100,000,000,000,00 tokens (100 billion)
         uint256 totalSupply_ = 100000000000 * 10**18;
         _mint(msg.sender, totalSupply_);
     }

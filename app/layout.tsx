@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { OnchainKitProvider } from '@/components/OnchainKitProvider'
-import { minikitConfig } from '@/minikit.config'
+import { minikitConfig } from '../minikit.config'
 
 const inter = Inter({ subsets: ['latin'] })
 
