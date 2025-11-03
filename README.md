@@ -9,6 +9,7 @@ A Next.js application integrated with Farcaster SDK and Base network support.
 - ⛓️ Base network support via OnchainKit
 - 💼 Wallet connection with Wagmi
 - 📱 TypeScript support
+- 🎮 **Tap Tap Game** - 10-level tapping game with points system
 
 ## Getting Started
 
@@ -51,7 +52,8 @@ farcaster-base-app/
 │   ├── page.tsx            # Main page component
 │   └── globals.css         # Global styles
 ├── components/
-│   └── OnchainKitProvider.tsx  # OnchainKit provider setup
+│   ├── OnchainKitProvider.tsx  # OnchainKit provider setup
+│   └── TapTapGame.tsx          # Tap Tap Game component (10 levels)
 ├── hooks/
 │   ├── useFarcasterSDK.ts  # Farcaster SDK hook
 │   └── useBaseWallet.ts    # Wallet connection hook
@@ -98,6 +100,54 @@ vercel
 - [Base Docs](https://docs.base.org/)
 - [OnchainKit Docs](https://docs.base.org/base-app/build-with-minikit/overview)
 - [Next.js Docs](https://nextjs.org/docs)
+
+## 🎮 Tap Tap Game
+
+The app includes a fun 10-level tap game where players earn points by tapping a button:
+
+- **10 Progressive Levels**: Each level requires more taps (10 to 200)
+- **Points System**: Earn points based on your current level (Level × 10 points per tap)
+- **Time Limits**: Each level has a countdown timer
+- **High Score Tracking**: Your best score is saved locally
+- **Visual Feedback**: Progress bars, animations, and level indicators
+
+### How to Play
+
+1. Click "Start Game" on the home page
+2. Tap the red button as fast as you can to earn points
+3. Complete the required number of taps before time runs out
+4. Advance through 10 increasingly challenging levels
+5. Try to beat your high score!
+
+## GitHub Setup
+
+Your repository is already initialized with Git! To push to GitHub:
+
+### Option 1: Using GitHub Website (Recommended)
+
+1. Go to [GitHub](https://github.com) and sign in
+2. Click the **+** icon in the top right → **New repository**
+3. Name your repository (e.g., `farcaster-base-app`)
+4. **Don't** initialize with README, .gitignore, or license (we already have these)
+5. Click **Create repository**
+6. Copy the repository URL (e.g., `https://github.com/yourusername/farcaster-base-app.git`)
+7. Run these commands in your project directory:
+
+```bash
+cd C:\Users\om\Desktop\farcaster-base-app
+git remote add origin https://github.com/yourusername/farcaster-base-app.git
+git branch -M main
+git push -u origin main
+```
+
+### Option 2: Using GitHub CLI
+
+If you have GitHub CLI installed:
+
+```bash
+cd C:\Users\om\Desktop\farcaster-base-app
+gh repo create farcaster-base-app --public --source=. --remote=origin --push
+```
 
 ## License
 
