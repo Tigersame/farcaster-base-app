@@ -56,9 +56,8 @@ const BASETAP_ABI = [
   },
 ] as const
 
-// Contract address - UPDATE THIS AFTER DEPLOYMENT
-// For now, using a placeholder - you'll need to deploy and update this
-const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as `0x${string}` || '0x0000000000000000000000000000000000000000'
+// Contract address - Base Sepolia Testnet
+const CONTRACT_ADDRESS = (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || '0xAa511Ffdf6492c61cE4f6E3b9d6088B2795a0f21') as `0x${string}`
 
 export function useBaseTapContract() {
   const { address, isConnected } = useAccount()

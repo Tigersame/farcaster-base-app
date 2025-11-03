@@ -1,14 +1,14 @@
 'use client'
 
 import { WagmiProvider, createConfig, http } from 'wagmi'
-import { base } from 'wagmi/chains'
+import { base, baseSepolia } from 'wagmi/chains'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { injected, metaMask, coinbaseWallet } from 'wagmi/connectors'
 
 const queryClient = new QueryClient()
 
 const config = createConfig({
-  chains: [base],
+  chains: [base, baseSepolia], // Support both mainnet and testnet
   connectors: [
     injected(),
     metaMask(),
@@ -16,6 +16,7 @@ const config = createConfig({
   ],
   transports: {
     [base.id]: http(process.env.NEXT_PUBLIC_BASE_RPC_URL || 'https://mainnet.base.org'),
+    [baseSepolia.id]: http(process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL || 'https://sepolia.base.org'),
   },
 })
 
