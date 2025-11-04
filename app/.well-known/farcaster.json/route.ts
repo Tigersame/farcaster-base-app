@@ -2,35 +2,21 @@ import { minikitConfig } from '../../../minikit.config'
 
 export async function GET() {
   // Generate manifest from minikitConfig
-  const manifest = {
-    accountAssociation: minikitConfig.accountAssociation.header 
-      ? {
-          header: minikitConfig.accountAssociation.header,
-          payload: minikitConfig.accountAssociation.payload,
-          signature: minikitConfig.accountAssociation.signature,
-        }
-      : {
-          header: "x-farcaster-verify",
-          payload: "fid"
-        },
-    miniapp: {
+  // Only include defined fields to match Base Mini App specification
+  const manifest: any = {
+    accountAssociation: {
+      header: minikitConfig.accountAssociation.header,
+      payload: minikitConfig.accountAssociation.payload,
+      signature: minikitConfig.accountAssociation.signature,
+    },
+    frame: {
       version: minikitConfig.miniapp.version,
       name: minikitConfig.miniapp.name,
-      subtitle: minikitConfig.miniapp.subtitle,
-      description: minikitConfig.miniapp.description,
-      screenshotUrls: minikitConfig.miniapp.screenshotUrls,
       iconUrl: minikitConfig.miniapp.iconUrl,
+      homeUrl: minikitConfig.miniapp.homeUrl,
+      imageUrl: minikitConfig.miniapp.heroImageUrl,
       splashImageUrl: minikitConfig.miniapp.splashImageUrl,
       splashBackgroundColor: minikitConfig.miniapp.splashBackgroundColor,
-      homeUrl: minikitConfig.miniapp.homeUrl,
-      webhookUrl: minikitConfig.miniapp.webhookUrl,
-      primaryCategory: minikitConfig.miniapp.primaryCategory,
-      tags: minikitConfig.miniapp.tags,
-      heroImageUrl: minikitConfig.miniapp.heroImageUrl,
-      tagline: minikitConfig.miniapp.tagline,
-      ogTitle: minikitConfig.miniapp.ogTitle,
-      ogDescription: minikitConfig.miniapp.ogDescription,
-      ogImageUrl: minikitConfig.miniapp.ogImageUrl,
     }
   }
 
