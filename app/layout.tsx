@@ -29,6 +29,22 @@ export const metadata: Metadata = {
     description: minikitConfig.miniapp.ogDescription || 'Play Tap Tap Game and earn BASETAP tokens!',
     images: [minikitConfig.miniapp.ogImageUrl || `${ROOT_URL}/og-image.png`],
   },
+  other: {
+    'fc:miniapp': JSON.stringify({
+      version: minikitConfig.miniapp.version,
+      imageUrl: minikitConfig.miniapp.heroImageUrl,
+      button: {
+        title: 'Play Now',
+        action: {
+          type: 'launch_frame',
+          name: minikitConfig.miniapp.name,
+          url: minikitConfig.miniapp.homeUrl,
+          splashImageUrl: minikitConfig.miniapp.splashImageUrl,
+          splashBackgroundColor: minikitConfig.miniapp.splashBackgroundColor,
+        },
+      },
+    }),
+  },
   viewport: {
     width: 'device-width',
     initialScale: 1,

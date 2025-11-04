@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract, useChainId } from 'wagmi'
 
-// Simple utility functions to avoid viem import issues
+// Simple utility function to avoid viem import issues
 const formatUnits = (value: bigint, decimals: number): string => {
   const divisor = BigInt(10) ** BigInt(decimals)
   const integerPart = value / divisor
@@ -15,43 +15,8 @@ const formatUnits = (value: bigint, decimals: number): string => {
 }
 
 // Define chains locally to avoid import issues
-const baseChain = {
-  id: 8453,
-  name: 'Base',
-  network: 'base',
-  nativeCurrency: {
-    decimals: 18,
-    name: 'Ether',
-    symbol: 'ETH',
-  },
-  rpcUrls: {
-    default: { http: ['https://mainnet.base.org'] },
-    public: { http: ['https://mainnet.base.org'] },
-  },
-  blockExplorers: {
-    default: { name: 'Basescan', url: 'https://basescan.org' },
-  },
-  testnet: false,
-}
-
-const baseSepoliaChain = {
-  id: 84532,
-  name: 'Base Sepolia',
-  network: 'base-sepolia',
-  nativeCurrency: {
-    decimals: 18,
-    name: 'Sepolia Ether',
-    symbol: 'ETH',
-  },
-  rpcUrls: {
-    default: { http: ['https://sepolia.base.org'] },
-    public: { http: ['https://sepolia.base.org'] },
-  },
-  blockExplorers: {
-    default: { name: 'Basescan', url: 'https://sepolia.basescan.org' },
-  },
-  testnet: true,
-}
+const base = { id: 8453, name: 'Base' }
+const baseSepolia = { id: 84532, name: 'Base Sepolia' }
 
 // BaseTap Contract ABI
 const BASETAP_ABI = [
@@ -107,8 +72,8 @@ const BASETAP_ABI = [
 
 // Contract addresses for different networks
 const CONTRACT_ADDRESSES = {
-  [baseSepoliaChain.id]: (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_SEPOLIA || '0xAa511Ffdf6492c61cE4f6E3b9d6088B2795a0f21') as `0x${string}`,
-  [baseChain.id]: (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_MAINNET || '0x2e0c500476b6f45886259f8e97fcf93fa800ee78') as `0x${string}`,
+  [baseSepolia.id]: (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_SEPOLIA || '0xAa511Ffdf6492c61cE4f6E3b9d6088B2795a0f21') as `0x${string}`,
+  [base.id]: (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_MAINNET || '0x2e0c500476b6f45886259f8e97fcf93fa800ee78') as `0x${string}`,
 } as const
 
 export function useBaseTapContract() {
@@ -117,9 +82,9 @@ export function useBaseTapContract() {
   const [claimingLevel, setClaimingLevel] = useState<number | null>(null)
   
   // Get contract address for current chain
-  const CONTRACT_ADDRESS = CONTRACT_ADDRESSES[chainId as keyof typeof CONTRACT_ADDRESSES] || CONTRACT_ADDRESSES[baseSepoliaChain.id]
-  const isMainnet = chainId === baseChain.id
-  const isTestnet = chainId === baseSepoliaChain.id
+  const CONTRACT_ADDRESS = CONTRACT_ADDRESSES[chainId as keyof typeof CONTRACT_ADDRESSES] || CONTRACT_ADDRESSES[baseSepolia.id]
+  const isMainnet = chainId === base.id
+  const isTestnet = chainId === baseSepolia.id
   const isContractDeployed = CONTRACT_ADDRESS && CONTRACT_ADDRESS !== '0x0000000000000000000000000000000000000000' && CONTRACT_ADDRESS.length > 0
 
   // Write contract for claiming rewards

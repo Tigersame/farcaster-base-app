@@ -8,43 +8,8 @@ import { TapTapGame } from '@/components/TapTapGame'
 import { useChainId } from 'wagmi'
 
 // Define chains locally to avoid import issues
-const baseChain = {
-  id: 8453,
-  name: 'Base',
-  network: 'base',
-  nativeCurrency: {
-    decimals: 18,
-    name: 'Ether',
-    symbol: 'ETH',
-  },
-  rpcUrls: {
-    default: { http: ['https://mainnet.base.org'] },
-    public: { http: ['https://mainnet.base.org'] },
-  },
-  blockExplorers: {
-    default: { name: 'Basescan', url: 'https://basescan.org' },
-  },
-  testnet: false,
-}
-
-const baseSepoliaChain = {
-  id: 84532,
-  name: 'Base Sepolia',
-  network: 'base-sepolia',
-  nativeCurrency: {
-    decimals: 18,
-    name: 'Sepolia Ether',
-    symbol: 'ETH',
-  },
-  rpcUrls: {
-    default: { http: ['https://sepolia.base.org'] },
-    public: { http: ['https://sepolia.base.org'] },
-  },
-  blockExplorers: {
-    default: { name: 'Basescan', url: 'https://sepolia.basescan.org' },
-  },
-  testnet: true,
-}
+const base = { id: 8453, name: 'Base' }
+const baseSepolia = { id: 84532, name: 'Base Sepolia' }
 
 export default function Home() {
   const { sdk, isReady } = useFarcasterSDK()
@@ -55,8 +20,8 @@ export default function Home() {
   const [mounted, setMounted] = useState(false)
   
   const currentChainId = chainId || chainIdFromWagmi
-  const isOnMainnet = currentChainId === baseChain.id
-  const isOnTestnet = currentChainId === baseSepoliaChain.id
+  const isOnMainnet = currentChainId === base.id
+  const isOnTestnet = currentChainId === baseSepolia.id
   const networkName = isOnMainnet ? 'Base Mainnet' : isOnTestnet ? 'Base Sepolia Testnet' : 'Unknown Network'
 
   useEffect(() => {
