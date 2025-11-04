@@ -1,37 +1,47 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import { ReactNode } from 'react'
 import './globals.css'
 import { OnchainKitProvider } from '@/components/OnchainKitProvider'
 import { minikitConfig } from '../minikit.config'
+import { APP_CONFIG } from '@/lib/constants'
 
 const inter = Inter({ subsets: ['latin'] })
 
-// Dynamic metadata from minikit config
-const ROOT_URL = process.env.NEXT_PUBLIC_URL || 'https://your-deployed-url.vercel.app'
+// Dynamic metadata from minikit config with fallbacks
+const ROOT_URL = (globalThis as any)?.process?.env?.NEXT_PUBLIC_URL || APP_CONFIG.DEFAULT_URL
 
 export const metadata: Metadata = {
-  title: minikitConfig.miniapp.ogTitle,
-  description: minikitConfig.miniapp.ogDescription,
+  title: minikitConfig.miniapp.ogTitle || APP_CONFIG.GAME_NAME,
+  description: minikitConfig.miniapp.ogDescription || 'Play Tap Tap Game and earn BASETAP tokens on Base network!',
+  metadataBase: new URL(ROOT_URL),
   openGraph: {
-    title: minikitConfig.miniapp.ogTitle,
-    description: minikitConfig.miniapp.ogDescription,
+    title: minikitConfig.miniapp.ogTitle || APP_CONFIG.GAME_NAME,
+    description: minikitConfig.miniapp.ogDescription || 'Play Tap Tap Game and earn BASETAP tokens!',
     type: 'website',
-    images: [minikitConfig.miniapp.ogImageUrl],
+    images: [minikitConfig.miniapp.ogImageUrl || `${ROOT_URL}/og-image.png`],
     url: ROOT_URL,
+    siteName: APP_CONFIG.APP_NAME,
   },
   twitter: {
     card: 'summary_large_image',
-    title: minikitConfig.miniapp.ogTitle,
-    description: minikitConfig.miniapp.ogDescription,
-    images: [minikitConfig.miniapp.ogImageUrl],
+    title: minikitConfig.miniapp.ogTitle || APP_CONFIG.GAME_NAME,
+    description: minikitConfig.miniapp.ogDescription || 'Play Tap Tap Game and earn BASETAP tokens!',
+    images: [minikitConfig.miniapp.ogImageUrl || `${ROOT_URL}/og-image.png`],
+  },
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
   },
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+interface RootLayoutProps {
+  children: ReactNode
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <head>

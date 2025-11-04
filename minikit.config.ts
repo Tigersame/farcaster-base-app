@@ -1,15 +1,17 @@
 // Base Mini App Configuration
 // This file configures your manifest at app/.well-known/farcaster.json
 
-const ROOT_URL = process.env.NEXT_PUBLIC_URL || 'https://farcaster-base-apps.vercel.app/'
+const ROOT_URL = process.env.NEXT_PUBLIC_URL || 'https://farcaster-base-gw7otsg7i-devsminiapp.vercel.app'
 
 export const minikitConfig = {
   accountAssociation: {
-    // These will be generated in Step 5 after deployment
-    // Get from: https://www.base.dev/preview?tab=account
-    "header": "eyJmaWQiOjYzOTczNCwidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweDM4YmM1ODA5RTNCMTQyMkU2RDAzZjIwOGNmNTNEMDUyQTFlQ0E4RDMifQ",
-    "payload": "eyJkb21haW4iOiJmYXJjYXN0ZXItYmFzZS1hcHBzLnZlcmNlbC5hcHAifQ",
-    "signature": "uJgkWUju1Vt2P9fCMNr/qvgUpQYwiiuMiUYQ9Z5R291Gl2exRFuqc0uQB87Uil1z1nexB86fmiTiGX25mCb6HBs="
+    // IMPORTANT: Update these credentials after deployment
+    // Go to: https://www.base.dev/preview?tab=account
+    // Enter your domain: farcaster-base-gw7otsg7i-devsminiapp.vercel.app
+    // Click "Verify" to generate new credentials
+    "header": "",
+    "payload": "",
+    "signature": ""
   },
 
   miniapp: {

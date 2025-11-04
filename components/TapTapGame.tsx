@@ -31,8 +31,8 @@ export function TapTapGame() {
     level: 1,
     score: 0,
     taps: 0,
-    targetTaps: LEVEL_CONFIG[0].targetTaps,
-    timeLeft: LEVEL_CONFIG[0].timeLimit,
+    targetTaps: LEVEL_CONFIG[0]!.targetTaps,
+    timeLeft: LEVEL_CONFIG[0]!.timeLimit,
   })
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null)
   const [highScore, setHighScore] = useState(0)

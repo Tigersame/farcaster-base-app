@@ -1,33 +1,41 @@
-'use client'
+﻿'use client'
 
 import { WagmiProvider, createConfig, http } from 'wagmi'
-import { base, baseSepolia } from 'wagmi/chains'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { injected, metaMask, coinbaseWallet } from 'wagmi/connectors'
 
-const queryClient = new QueryClient()
+const baseChain = {
+  id: 8453,
+  name: 'Base',
+  network: 'base',
+  nativeCurrency: { decimals: 18, name: 'Ether', symbol: 'ETH' },
+  rpcUrls: { default: { http: ['https://mainnet.base.org'] } },
+  blockExplorers: { default: { name: 'Basescan', url: 'https://basescan.org' } },
+  testnet: false,
+}
+
+const baseSepoliaChain = {
+  id: 84532,
+  name: 'Base Sepolia',
+  network: 'base-sepolia',
+  nativeCurrency: { decimals: 18, name: 'Sepolia Ether', symbol: 'ETH' },
+  rpcUrls: { default: { http: ['https://sepolia.base.org'] } },
+  blockExplorers: { default: { name: 'Basescan', url: 'https://sepolia.basescan.org' } },
+  testnet: true,
+}
 
 const config = createConfig({
-  chains: [base, baseSepolia], // Support both mainnet and testnet
-  connectors: [
-    injected(),
-    metaMask(),
-    coinbaseWallet({ 
-      appName: 'Farcaster Base App',
-      // Base Smart Wallet (Formally) support is built into coinbaseWallet connector
-    }),
-  ],
+  chains: [baseChain, baseSepoliaChain],
+  connectors: [injected(), metaMask(), coinbaseWallet({ appName: 'Farcaster Base App' })],
   transports: {
-    [base.id]: http(process.env.NEXT_PUBLIC_BASE_RPC_URL || 'https://base-mainnet.g.alchemy.com/v2/skI70Usmhsnf0GDuGdYqj'),
-    [baseSepolia.id]: http(process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL || 'https://sepolia.base.org'),
+    [baseChain.id]: http('https://base-mainnet.g.alchemy.com/v2/skI70Usmhsnf0GDuGdYqj'),
+    [baseSepoliaChain.id]: http('https://sepolia.base.org'),
   },
 })
 
-interface OnchainKitProviderProps {
-  children: React.ReactNode
-}
+const queryClient = new QueryClient()
 
-export function OnchainKitProvider({ children }: OnchainKitProviderProps) {
+export function OnchainKitProvider({ children }: { children: React.ReactNode }) {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
@@ -36,4 +44,3 @@ export function OnchainKitProvider({ children }: OnchainKitProviderProps) {
     </WagmiProvider>
   )
 }
-
