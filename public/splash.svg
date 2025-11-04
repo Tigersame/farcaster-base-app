@@ -1,0 +1,6 @@
+<svg width="1200" height="1600" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="1600" fill="#0052FF"/>
+  <text x="600" y="700" font-family="Arial, sans-serif" font-size="160" fill="white" text-anchor="middle">🎮</text>
+  <text x="600" y="950" font-family="Arial, sans-serif" font-size="60" font-weight="bold" fill="white" text-anchor="middle">Base Tap Game</text>
+  <text x="600" y="1050" font-family="Arial, sans-serif" font-size="36" fill="white" text-anchor="middle" opacity="0.9">Loading...</text>
+</svg>

@@ -1,0 +1,5 @@
+﻿<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" fill="#0052FF"/>
+  <text x="50%" y="50%" font-family="Arial" font-size="120" fill="white" text-anchor="middle" dominant-baseline="middle"></text>
+  <text x="50%" y="75%" font-family="Arial" font-size="32" fill="white" text-anchor="middle" dominant-baseline="middle">Base Tap</text>
+</svg>

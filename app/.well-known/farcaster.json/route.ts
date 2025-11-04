@@ -1,9 +1,9 @@
 import { minikitConfig } from '../../../minikit.config'
 
 export async function GET() {
-  // Generate manifest from minikitConfig
-  // Only include defined fields to match Base Mini App specification
-  const manifest: any = {
+  // Farcaster Mini App Manifest
+  // Follows the specification at https://docs.farcaster.xyz/developers/frames/v2/spec
+  const manifest = {
     accountAssociation: {
       header: minikitConfig.accountAssociation.header,
       payload: minikitConfig.accountAssociation.payload,
@@ -14,7 +14,7 @@ export async function GET() {
       name: minikitConfig.miniapp.name,
       iconUrl: minikitConfig.miniapp.iconUrl,
       homeUrl: minikitConfig.miniapp.homeUrl,
-      imageUrl: minikitConfig.miniapp.heroImageUrl,
+      imageUrl: minikitConfig.miniapp.heroImageUrl || minikitConfig.miniapp.iconUrl,
       splashImageUrl: minikitConfig.miniapp.splashImageUrl,
       splashBackgroundColor: minikitConfig.miniapp.splashBackgroundColor,
     }
@@ -24,6 +24,7 @@ export async function GET() {
     headers: {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',
+      'Cache-Control': 'public, max-age=3600',
     },
   })
 }
