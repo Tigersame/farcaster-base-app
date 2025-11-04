@@ -7,9 +7,16 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "compile": "hardhat compile",
-    "deploy:base": "hardhat run scripts/deploy.js --network base",
-    "deploy:baseSepolia": "hardhat run scripts/deploy.js --network baseSepolia"
+    "lint:fix": "next lint --fix",
+    "type-check": "tsc --noEmit",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
+    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
+    "clean": "rm -rf .next dist build",
+    "contracts:compile": "hardhat compile",
+    "contracts:deploy:base": "hardhat run scripts/deploy.js --network base",
+    "contracts:deploy:baseSepolia": "hardhat run scripts/deploy.js --network baseSepolia",
+    "contracts:verify": "hardhat verify --network base",
+    "test": "echo 'No tests specified' && exit 0"
   },
   "dependencies": {
     "@farcaster/miniapp-sdk": "^0.2.1",
