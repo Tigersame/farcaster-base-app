@@ -5,13 +5,9 @@ const ROOT_URL = process.env.NEXT_PUBLIC_URL || 'https://farcaster-base-gw7otsg7
 
 export const minikitConfig = {
   accountAssociation: {
-    // IMPORTANT: Update these credentials after deployment
-    // Go to: https://www.base.dev/preview?tab=account
-    // Enter your domain: farcaster-base-gw7otsg7i-devsminiapp.vercel.app
-    // Click "Verify" to generate new credentials
-    "header": "",
-    "payload": "",
-    "signature": ""
+    "header": "eyJmaWQiOjI3OTA1NSwidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweDRCMjEwOTE1MjJGMDA5OUI4Rjc2Mzk2OGQzNzliMGY4M2E1NWNBYjMifQ",
+    "payload": "eyJkb21haW4iOiJmYXJjYXN0ZXItYmFzZS1hcHBzLnZlcmNlbC5hcHAifQ",
+    "signature": "zzbF+ZWyCB/QT+/4VWZUI0rxlAbQFJDAZZ5KZpYMofgjneQTWY0HGWcn0kdEmu4dsNfpoxsbney4Bb6d0XU7RBw="
   },
 
   miniapp: {
