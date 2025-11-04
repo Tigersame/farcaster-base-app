@@ -31,8 +31,8 @@ export function TapTapGame() {
     level: 1,
     score: 0,
     taps: 0,
-    targetTaps: LEVEL_CONFIG[0]!.targetTaps,
-    timeLeft: LEVEL_CONFIG[0]!.timeLimit,
+    targetTaps: LEVEL_CONFIG[0].targetTaps,
+    timeLeft: LEVEL_CONFIG[0].timeLimit,
   })
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null)
   const [highScore, setHighScore] = useState(0)
@@ -92,8 +92,8 @@ export function TapTapGame() {
       level: 1,
       score: 0,
       taps: 0,
-      targetTaps: LEVEL_CONFIG[0].targetTaps,
-      timeLeft: LEVEL_CONFIG[0].timeLimit,
+      targetTaps: LEVEL_CONFIG[0]!.targetTaps,
+      timeLeft: LEVEL_CONFIG[0]!.timeLimit,
     })
   }
 
@@ -126,7 +126,7 @@ export function TapTapGame() {
         // Level up! Track completed level
         const currentLevel = prev.level
         setCompletedLevels((prev) => [...prev, currentLevel])
-        const levelConfig = LEVEL_CONFIG[nextLevel - 1]
+        const levelConfig = LEVEL_CONFIG[nextLevel - 1]!
         return {
           level: nextLevel,
           score: newScore,
@@ -155,8 +155,8 @@ export function TapTapGame() {
       level: 1,
       score: 0,
       taps: 0,
-      targetTaps: LEVEL_CONFIG[0].targetTaps,
-      timeLeft: LEVEL_CONFIG[0].timeLimit,
+      targetTaps: LEVEL_CONFIG[0]!.targetTaps,
+      timeLeft: LEVEL_CONFIG[0]!.timeLimit,
     })
   }
 
@@ -165,7 +165,7 @@ export function TapTapGame() {
   }
 
   const getTimePercentage = () => {
-    const currentLevelConfig = LEVEL_CONFIG[stats.level - 1]
+    const currentLevelConfig = LEVEL_CONFIG[stats.level - 1]!
     return (stats.timeLeft / currentLevelConfig.timeLimit) * 100
   }
 
